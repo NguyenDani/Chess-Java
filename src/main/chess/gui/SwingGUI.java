@@ -1,3 +1,5 @@
+package chess.gui;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -10,14 +12,14 @@ public class SwingGUI extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         chessBoardPanel = new JPanel(new GridLayout(8, 8));
-        initializeChessBoard();
+        InitChessBoard();
 
         add(chessBoardPanel);
         pack();
         setLocationRelativeTo(null); // Center the frame
     }
 
-    private void initializeChessBoard() {
+    private void InitChessBoard() {
         // Create and add buttons to represent chessboard squares
         for(int i = 0; i < 8; i++) {
             for(int j = 0; j < 8; j++) {

@@ -36,8 +36,8 @@ public abstract class Piece {
         return true;
     }
 
-    protected boolean capture(int startX, int startY, int endX, int endY, Piece[][] board) {
-        // Implement capture
-        return true;
+    public void capture(int targetX, int targetY, Piece[][] board) {
+        // Capture the piece at the specified position
+        board[targetX][targetY] = null;
     }
 }

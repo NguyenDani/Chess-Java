@@ -1,4 +1,4 @@
-package chess;
+package com.nguyendani.chess;
 
 public class ChessApp {
     public static void main (String[] args) {

@@ -1,4 +1,4 @@
-package chess;
+package com.nguyendani.chess;
 
 import java.util.List;
 

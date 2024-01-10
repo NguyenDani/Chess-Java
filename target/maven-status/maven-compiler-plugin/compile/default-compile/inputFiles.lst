@@ -1,0 +1,12 @@
+/home/dnguyen/code/Chess-Java/src/main/java/com/nguyendani/chess/gui/ChessGUI.java
+/home/dnguyen/code/Chess-Java/src/main/java/com/nguyendani/chess/pieces/Rook.java
+/home/dnguyen/code/Chess-Java/src/main/java/com/nguyendani/chess/pieces/Bishop.java
+/home/dnguyen/code/Chess-Java/src/main/java/com/nguyendani/chess/ChessApp.java
+/home/dnguyen/code/Chess-Java/src/main/java/com/nguyendani/chess/pieces/Queen.java
+/home/dnguyen/code/Chess-Java/src/main/java/com/nguyendani/chess/Game.java
+/home/dnguyen/code/Chess-Java/src/main/java/com/nguyendani/chess/pieces/King.java
+/home/dnguyen/code/Chess-Java/src/main/java/com/nguyendani/chess/Player.java
+/home/dnguyen/code/Chess-Java/src/main/java/com/nguyendani/chess/pieces/Pawn.java
+/home/dnguyen/code/Chess-Java/src/main/java/com/nguyendani/chess/ChessBoard.java
+/home/dnguyen/code/Chess-Java/src/main/java/com/nguyendani/chess/pieces/Knight.java
+/home/dnguyen/code/Chess-Java/src/main/java/com/nguyendani/chess/pieces/Piece.java

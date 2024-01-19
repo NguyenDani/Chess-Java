@@ -1,24 +1,17 @@
 package com.nguyendani.chess.pieces;
 
 public abstract class Piece {
-    private String type;
-    private boolean isWhite; // Or isBlack
-    private int currentX;
-    private int currentY;
+    private boolean isWhite;
+    private int startX;
+    private int startY;
 
-    public Piece(String type, boolean isWhite, int startX, int startY) {
-        // Initialize the piece type and color
-        this.type = type;
+    public Piece(boolean isWhite, int startX, int startY) {
         this.isWhite = isWhite;
-        this.currentX = startX;
-        this.currentY = startY;
+        this.startX = startX;
+        this.startY = startY;
     }
 
-    public abstract boolean isValidMove(int endX, int endY, Piece[][] board);
-
-    public boolean isSameColor(Piece otherPiece) {
-        return this.isWhite == otherPiece.isWhite;
-    }
+    public abstract boolean isValidMove(int startX, int startY, int endX, int endY, Piece[][] board);
 
     protected boolean isSameSpot(int endX, int endY) {
         if(startX == endX && startY == endY){
@@ -58,11 +51,15 @@ public abstract class Piece {
         return false;
     }
 
-    public void move(int endX, int endY, Piece[][] board) {
+    public boolean isSameColor(Piece otherPiece) {
+        return this.isWhite == otherPiece.isWhite;
+    }
+
+    public void movePiece(int endX, int endY, Piece[][] board) {
         // Update the piece's position
-        board[currentX][currentY] = null;
+        board[startX][startY] = null;
         board[endX][endY] = this;
-        this.currentX = endX;
-        this.currentY = endY;
+        this.startX = endX;
+        this.startY = endY;
     }
 }

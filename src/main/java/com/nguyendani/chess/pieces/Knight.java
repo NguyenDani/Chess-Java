@@ -3,12 +3,12 @@ package com.nguyendani.chess.pieces;
 public class Knight extends Piece {
 
     public Knight(boolean isWhite, int startX, int startY){
-        super("Knight", isWhite, startX, startY);
+        super(isWhite, startX, startY);
     }
 
     @Override
     public boolean isValidMove(int startX, int startY, int endX, int endY, Piece[][] board) { 
-        if(isSameSpot) {
+        if(isSameSpot(endX, endY)) {
             return false;
         }
 

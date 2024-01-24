@@ -11,6 +11,10 @@ public abstract class Piece {
         this.startY = startY;
     }
 
+    public void test(){
+        System.out.println("From pieces startX: " + startX + " startY: " + startY);
+    }
+
     public abstract boolean isValidMove(int startX, int startY, int endX, int endY, Piece[][] board);
 
     protected boolean isSameSpot(int endX, int endY) {

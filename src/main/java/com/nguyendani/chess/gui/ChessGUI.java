@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 
 public class ChessGUI extends JFrame {
     private JPanel chessboardPanel;
+    private JButton[][] squares;
 
     public ChessGUI() {
         setTitle("Chess Game");
@@ -18,32 +19,73 @@ public class ChessGUI extends JFrame {
         setLayout(new BorderLayout());
 
         createChessboard();
+        setBoard();
         createNewGame();
         
         setVisible(true);
     }
 
-    // Chessboard Tiles
+    // Chessboard
     private void createChessboard() {
         chessboardPanel = new JPanel(new GridLayout(8, 8));
         boolean isWhite = true;
+        squares = new JButton[8][8];
+
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 JButton square = new JButton();
+                // Tile Colors
                 square.setBackground(isWhite ? Color.WHITE : Color.BLACK);
-
-                // Temporary Piece
-                if(i == 5 && j == 5){
-                    new Queen(true, i, j);
-                }
 
                 isWhite = !isWhite;
                 chessboardPanel.add(square);
+                squares[i][j] = square;
             }
             isWhite = !isWhite;
         }
 
         add(chessboardPanel, BorderLayout.CENTER);
+    }
+
+    private void setBoard() {
+        // Array to store piece types and colors for the initial board setup
+        String[][] initialBoard = {
+            {"blackRook", "blackKnight", "blackBishop", "blackQueen", "blackKing", "blackBishop", "blackKnight", "blackRook"},
+            {"blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn"},
+            {"", "", "", "", "", "", "", ""},
+            {"", "", "", "", "", "", "", ""},
+            {"", "", "", "", "", "", "", ""},
+            {"", "", "", "", "", "", "", ""},
+            {"whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn"},
+            {"whiteRook", "whiteKnight", "whiteBishop", "whiteQueen", "whiteKing", "whiteBishop", "whiteKnight", "whiteRook"}
+        };
+
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                String pieceName = initialBoard[i][j];
+                if (!pieceName.isEmpty()) {
+                    // Load piece image based on the piece type and color
+                    ImageIcon pieceIcon = loadImageIcon(pieceName + ".png");
+                    squares[i][j].setIcon(pieceIcon);
+                    new Queen(true, i, j, pieceIcon);
+                }
+                else {
+                    squares[i][j].setIcon(null);
+                }
+            }
+        }
+    }
+
+    // Load Image
+    private ImageIcon loadImageIcon(String imageName) {
+        ClassLoader classLoader = getClass().getClassLoader();
+        java.net.URL imageUrl = classLoader.getResource("images/" + imageName);
+        if (imageUrl != null) {
+            return new ImageIcon(imageUrl);
+        } else {
+            // Handle the case where the image is not found
+            return new ImageIcon(); // Default empty icon
+        }
     }
 
     // New Game Button

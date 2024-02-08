@@ -1,12 +1,11 @@
 package com.nguyendani.chess.pieces;
 
-import javax.swing.ImageIcon;
-
 public class Queen extends Piece{
  
-    public Queen(boolean isWhite, int startX, int startY, ImageIcon icon){
+    public Queen(boolean isWhite, int startX, int startY){
         super(isWhite, startX, startY);
         System.out.println("Create New Queen");
+        System.out.println("isWhite: " + isWhite);
         System.out.println("From Queen startX: " + startX + " startY: " + startY);
         test();
     }

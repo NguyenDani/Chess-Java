@@ -1,6 +1,9 @@
 package com.nguyendani.chess.gui;
 
 import javax.swing.*;
+
+import com.nguyendani.chess.Game;
+
 import java.awt.*;
 
 public class ChessGUI extends JFrame {
@@ -47,6 +50,8 @@ public class ChessGUI extends JFrame {
         JPanel controlPanel = new JPanel();
         JButton newGameButton = new JButton("New Game");
         controlPanel.add(newGameButton);
+
+        Game.newGameActionListener(newGameButton);
 
         add(controlPanel, BorderLayout.SOUTH);
     }

@@ -1,5 +1,8 @@
 package com.nguyendani.chess;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.SwingUtilities;
@@ -10,6 +13,7 @@ import com.nguyendani.chess.pieces.*;
 
 public class Game {
     private ChessGUI chessGUI;
+    private Piece[][] board;
 
     private String[][] initialBoard = {
         {"Rook", "Knight", "Bishop", "Queen", "King", "Bishop", "Knight", "Rook"},
@@ -22,62 +26,47 @@ public class Game {
         {"Rook", "Knight", "Bishop", "Queen", "King", "Bishop", "Knight", "Rook"}
     };
 
-    public Game() {
-        try {
-            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        // Create an instance of ChessGUI
-        SwingUtilities.invokeLater(() -> {
-            chessGUI = new ChessGUI();
-            setBoard();
-        });
-    }
-
     // Set Board
     private void setBoard() {
         JButton[][] chessTile = chessGUI.getChessTile();
+        board = new Piece[8][8];
 
         for(int i = 0; i < 8; i++) {
             for(int j = 0; j < 8; j++) {
+                chessTileActionListener(chessTile[i][j], i, j);
                 String pieceName = initialBoard[i][j];
                 
                 if (!pieceName.isEmpty()) {
                     String color = (i <= 2) ? "black" : "white";
-                    boolean isWhite = (i <= 2) ? false : true;
+                    boolean isWhitePlayer = (i <= 2) ? false : true;
 
                     // Load piece image based on the piece type and color
                     ImageIcon pieceIcon = loadImageIcon(color + pieceName + ".png");
-                    System.out.println(color + pieceName + ".png");
                     chessTile[i][j].setIcon(pieceIcon);
-                    new Queen(true, i, j, pieceIcon);
 
-                    Piece chessPiece;
                     switch (pieceName) {
                     case "Rook":
-                        chessPiece = new Rook(isWhite, i, j);
+                        board[i][j] = new Rook(isWhitePlayer, j, i);
                         break;
                     case "Knight":
-                        chessPiece = new Knight(isWhite, i, j);
+                        board[i][j] = new Knight(isWhitePlayer, j, i);
                         break;
                     case "Bishop":
-                        chessPiece = new Bishop(isWhite, i, j);
+                        board[i][j] = new Bishop(isWhitePlayer, j, i);
                         break;
                     case "Queen":
-                        chessPiece = new Queen(isWhite, i, j);
+                        board[i][j] = new Queen(isWhitePlayer, j, i);
                         break;
                     case "King":
-                        chessPiece = new King(isWhite, i, j);
+                        board[i][j] = new King(isWhitePlayer, j, i);
                         break;
                     case "Pawn":
-                        chessPiece = new Pawn(isWhite, i, j);
+                        board[i][j] = new Pawn(isWhitePlayer, j, i);
                         break;
                     default:
-                        chessPiece = null;
+                        board[i][j] = null;
                         break;
-                }
+                    }
                 }
                 else {
                     chessTile[i][j].setIcon(null);
@@ -87,9 +76,28 @@ public class Game {
         }
     }
 
-    // New Game
-    private void newGame() {
+    // New Game Event Listener
+    public static void newGameActionListener(JButton newGameButton) {
+        newGameButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("New Game Button Clicked");
+            }   
+        });
+    }
 
+    // Chess Tile Event Listener
+    private void chessTileActionListener(JButton button, int row, int col) {
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //JButton clickButton = (JButton) e.getSource();
+
+                int clickedRow = row;
+                int clickedColumn = col;
+                System.out.println("Button clicked at row: " + clickedRow + ", column: " + clickedColumn);
+            }
+        });
     }
 
     // Load Image
@@ -106,6 +114,20 @@ public class Game {
 
     private void move() {
         
+    }
+
+    public Game() {
+        try {
+            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // Create an instance of ChessGUI
+        SwingUtilities.invokeLater(() -> {
+            chessGUI = new ChessGUI();
+            setBoard();
+        });
     }
 
     // Main

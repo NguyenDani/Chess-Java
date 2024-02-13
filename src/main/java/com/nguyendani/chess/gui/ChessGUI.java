@@ -30,7 +30,7 @@ public class ChessGUI extends JFrame {
                 JButton tile = new JButton();
                 tile.setFocusPainted(false);
 
-                tile.setBackground(isWhite ? Color.WHITE : Color.BLACK);
+                tile.setBackground(isWhite ? Color.WHITE : Color.GRAY);
 
                 isWhite = !isWhite;
                 chessBoard.add(tile);
@@ -39,6 +39,16 @@ public class ChessGUI extends JFrame {
             isWhite = !isWhite;
         }
         add(chessBoard, BorderLayout.CENTER);
+    }
+    
+    public void endGame(String result) {
+        JPanel endJPanel = new JPanel();
+        JLabel endText = new JLabel();
+        endText.setText(result);
+        endText.setFont(new Font("Arial", Font.BOLD, 20));
+        endText.setForeground(Color.BLUE);
+        endJPanel.add(endText);
+        add(endJPanel, BorderLayout.NORTH);
     }
 
     public JButton[][] getChessTile() {

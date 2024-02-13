@@ -122,6 +122,7 @@ public class Game {
     // Move Piece
     private void move(int oldCol, int oldRow, int newCol, int newRow) {
         if (board[oldRow][oldCol].isValidMove(oldCol, oldRow, newCol, newRow, board)) {
+            
             // Move Piece
             board[newRow][newCol] = board[oldRow][oldCol];
             board[oldRow][oldCol] = null;
@@ -131,8 +132,120 @@ public class Game {
             chessTile[oldRow][oldCol].setIcon(null);
 
             whiteTurn = !whiteTurn;
+
+            // Check for checkmate
+            boolean isWhiteKingInCheck = isInCheck(true);
+            boolean isBlackKingInCheck = isInCheck(false);
+
+            if (isWhiteKingInCheck && isCheckmate(true)) {
+                // White player is in checkmate
+                // Handle game over for white
+                chessGUI.endGame("Black Won");
+            } else if (isBlackKingInCheck && isCheckmate(false)) {
+                // Black player is in checkmate
+                // Handle game over for black
+                chessGUI.endGame("White Won");
+            } else if (isStalemate(true) || isStalemate(false)) {
+                // Stalemate
+                // Handle game over for both players
+                chessGUI.endGame("Stalemate Game Over");
+            }
         }
     }
+
+    // Check
+    private boolean isInCheck(boolean isWhitePlayer) {
+        int kingRow = -1;
+        int kingCol = -1;
+    
+        // Find the position of the king
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (board[i][j] instanceof King && board[i][j].isWhite == isWhitePlayer) {
+                    kingRow = i;
+                    kingCol = j;
+                    break;
+                }
+            }
+        }
+    
+        // Check if any opponent's piece can attack the king
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (board[i][j] != null && board[i][j].isWhite != isWhitePlayer) {
+                    if (board[i][j].isValidMove(j, i, kingCol, kingRow, board)) {
+                        return true;
+                    }
+                }
+            }
+        }
+    
+        return false;
+    }
+
+    //Checkmate
+    private boolean isCheckmate(boolean isWhitePlayer) {
+        // Check if the player is in check
+        if (!isInCheck(isWhitePlayer))
+            return false;
+    
+        // Try all possible moves for the player
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (board[i][j] != null && board[i][j].isWhite == isWhitePlayer) {
+                    for (int newRow = 0; newRow < 8; newRow++) {
+                        for (int newCol = 0; newCol < 8; newCol++) {
+                            if (board[i][j].isValidMove(j, i, newCol, newRow, board)) {
+                                // Simulate moving the piece
+                                Piece temp = board[newRow][newCol];
+                                board[newRow][newCol] = board[i][j];
+                                board[i][j] = null;
+    
+                                // Check if the king is still in check after the move
+                                if (!isInCheck(isWhitePlayer)) {
+                                    // Undo the move
+                                    board[i][j] = board[newRow][newCol];
+                                    board[newRow][newCol] = temp;
+                                    return false;
+                                }
+    
+                                // Undo the move
+                                board[i][j] = board[newRow][newCol];
+                                board[newRow][newCol] = temp;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    
+        return true;
+    }
+
+    // Stalemate
+    private boolean isStalemate(boolean isWhitePlayer) {
+        // Check if the player has no legal moves and their king is not in check
+        if (isInCheck(isWhitePlayer))
+            return false;
+    
+        // Try all possible moves for the player
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (board[i][j] != null && board[i][j].isWhite == isWhitePlayer) {
+                    for (int newRow = 0; newRow < 8; newRow++) {
+                        for (int newCol = 0; newCol < 8; newCol++) {
+                            if (board[i][j].isValidMove(j, i, newCol, newRow, board)) {
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    
+        return true;
+    }
+    
 
     public Game() {
         try {

@@ -4,23 +4,19 @@ public class Pawn extends Piece {
     private boolean isFirstMove;
     private boolean isWhite;
 
-    public Pawn(boolean isWhite, int startX, int startY){
-        super(isWhite, startX, startY);
+    public Pawn(boolean isWhite) {
+        super(isWhite);
         this.isFirstMove = true;
         this.isWhite = isWhite;
     }
 
     @Override
-    public boolean isValidMove(int startX, int startY, int endX, int endY, Piece[][] board){ 
-        if(isSameSpot(endX, endY)) {
-            return false;
-        }
-        // Implement pawn-specific move validation logic
-        int direction = this.isWhite ? 1 : -1; // White increase Y Black decrease Y
-       
+    public boolean isValidMove(int startX, int startY, int endX, int endY, Piece[][] board) {
+        int direction = this.isWhite ? -1 : 1; // White increase Y Black decrease Y
+
         // First move: 2 space forward
-        if(startY + 2 * direction == endY && startX == endX && isFirstMove) {
-            if(isPathClear(endX, endY, board)) {
+        if (startY + 2 * direction == endY && startX == endX && isFirstMove) {
+            if (isPathClear(startX, startY, endX, endY, board)) {
                 updateFirstMove();
                 return true;
             }
@@ -28,8 +24,8 @@ public class Pawn extends Piece {
         }
 
         // Regular move: 1 space forward
-        if(startY + direction == endY && startX == endX) {
-            if(isPathClear(endX, endY, board)) {
+        else if (startY + direction == endY && startX == endX) {
+            if (board[endY][endX] == null) {
                 updateFirstMove();
                 return true;
             }
@@ -37,8 +33,8 @@ public class Pawn extends Piece {
         }
 
         // Capture: 1 square diagonal forward
-        if(startY + direction == endY && Math.abs(startX - endX) == 1) {
-            if(capture(endX, endY, board)) {
+        else if (startY + direction == endY && Math.abs(startX - endX) == 1) {
+            if (capture(endX, endY, board)) {
                 updateFirstMove();
                 return true;
             }
@@ -47,9 +43,10 @@ public class Pawn extends Piece {
 
         return false;
     }
-        private void updateFirstMove() {
-            if(isFirstMove) {
-                isFirstMove = false;
-            }
+
+    private void updateFirstMove() {
+        if (isFirstMove) {
+            isFirstMove = false;
         }
+    }
 }

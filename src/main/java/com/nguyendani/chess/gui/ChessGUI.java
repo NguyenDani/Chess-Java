@@ -1,9 +1,8 @@
 package com.nguyendani.chess.gui;
 
-import javax.swing.*;
-
 import com.nguyendani.chess.Game;
 
+import javax.swing.*;
 import java.awt.*;
 
 public class ChessGUI extends JFrame {
@@ -19,7 +18,7 @@ public class ChessGUI extends JFrame {
 
         createChessboard();
         newGameButton();
-        
+
         setVisible(true);
     }
 
@@ -28,9 +27,9 @@ public class ChessGUI extends JFrame {
         chessBoard = new JPanel(new GridLayout(8, 8));
         chessTile = new JButton[8][8];
         boolean isWhite = true;
-        
-        for(int row = 0; row < 8; row++){
-            for(int col = 0; col < 8; col++){
+
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
                 JButton tile = new JButton();
                 tile.setFocusPainted(false);
 

@@ -80,16 +80,6 @@ public class Game {
         }
     }
 
-    // New Game Event Listener
-    public static void newGameActionListener(JButton newGameButton) {
-        newGameButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("New Game Button Clicked");
-            }
-        });
-    }
-
     // Chess Tile Event Listener
     private void chessTileActionListener(JButton button, int row, int col) {
 

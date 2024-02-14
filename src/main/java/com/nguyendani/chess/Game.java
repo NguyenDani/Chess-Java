@@ -21,6 +21,7 @@ public class Game {
     private int storedCol, storedRow;
     private JButton storedButton;
     private boolean whiteTurn = true;
+    private boolean isAnyCheck;
 
     private String[][] initialBoard = {
             { "Rook", "Knight", "Bishop", "Queen", "King", "Bishop", "Knight", "Rook" },
@@ -99,7 +100,16 @@ public class Game {
                     if (storedButton != button)
                         move(storedCol, storedRow, col, row);
 
-                    storedButton.setBorder(null);
+                    if (board[storedRow][storedCol] instanceof King) {
+                        if (isInCheck(whiteTurn)) {
+                            storedButton.setBorder(BorderFactory.createLineBorder(Color.RED, 5));
+                        } else {
+                            storedButton.setBorder(null);
+                        }
+                    } else {
+                        storedButton.setBorder(null);
+                    }
+
                     initalClick = true;
                 }
 
@@ -122,7 +132,29 @@ public class Game {
     // Move Piece
     private void move(int oldCol, int oldRow, int newCol, int newRow) {
         if (board[oldRow][oldCol].isValidMove(oldCol, oldRow, newCol, newRow, board)) {
-            
+            if (isAnyCheck) {
+                // Only moves to get King out of check
+                if (!uncheckAfterMove(oldCol, oldRow, newCol, newRow))
+                    return;
+            }
+
+            // Make sure not check own king
+            // Simulate the move
+            Piece temp = board[newRow][newCol];
+            board[newRow][newCol] = board[oldRow][oldCol];
+            board[oldRow][oldCol] = null;
+
+            // Check if the king is in check after the move
+            boolean kingInCheck = isInCheck(board[newRow][newCol].isWhite);
+
+            // Undo the move
+            board[oldRow][oldCol] = board[newRow][newCol];
+            board[newRow][newCol] = temp;
+
+            // If king is in check after the move, prevent the move
+            if (kingInCheck)
+                return;
+
             // Move Piece
             board[newRow][newCol] = board[oldRow][oldCol];
             board[oldRow][oldCol] = null;
@@ -133,31 +165,47 @@ public class Game {
 
             whiteTurn = !whiteTurn;
 
-            // Check for checkmate
-            boolean isWhiteKingInCheck = isInCheck(true);
-            boolean isBlackKingInCheck = isInCheck(false);
+            isAnyCheck = (whiteTurn) ? isInCheck(true) : isInCheck(false);
 
-            if (isWhiteKingInCheck && isCheckmate(true)) {
-                // White player is in checkmate
-                // Handle game over for white
-                chessGUI.endGame("Black Won");
-            } else if (isBlackKingInCheck && isCheckmate(false)) {
-                // Black player is in checkmate
-                // Handle game over for black
-                chessGUI.endGame("White Won");
-            } else if (isStalemate(true) || isStalemate(false)) {
-                // Stalemate
-                // Handle game over for both players
-                chessGUI.endGame("Stalemate Game Over");
+            if (isAnyCheck) {
+                if (isCheckmate(whiteTurn))
+                    if (whiteTurn)
+                        chessGUI.endGame(false);
+                    else
+                        chessGUI.endGame(true);
+            } else {
+                if (isStalemate(true) || isStalemate(false)) {
+                    chessGUI.endGame(null);
+                }
             }
+
         }
+    }
+
+    // Uncheck
+    private boolean uncheckAfterMove(int oldCol, int oldRow, int newCol, int newRow) {
+        // Simulate the move
+        Piece temp = board[newRow][newCol];
+        board[newRow][newCol] = board[oldRow][oldCol];
+        board[oldRow][oldCol] = null;
+
+        // Check if the king is in check after the move
+        boolean kingInCheck = isInCheck(board[newRow][newCol].isWhite);
+        chessTile[newRow][newCol].setBorder(null);
+
+        // Undo the move
+        board[oldRow][oldCol] = board[newRow][newCol];
+        board[newRow][newCol] = temp;
+
+        // If king is in check after the move, return false
+        return !kingInCheck;
     }
 
     // Check
     private boolean isInCheck(boolean isWhitePlayer) {
         int kingRow = -1;
         int kingCol = -1;
-    
+
         // Find the position of the king
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
@@ -168,27 +216,37 @@ public class Game {
                 }
             }
         }
-    
+
         // Check if any opponent's piece can attack the king
+        boolean kingInCheck = false;
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 if (board[i][j] != null && board[i][j].isWhite != isWhitePlayer) {
                     if (board[i][j].isValidMove(j, i, kingCol, kingRow, board)) {
-                        return true;
+                        kingInCheck = true;
+                        break;
                     }
                 }
             }
+            if (kingInCheck)
+                break;
         }
-    
-        return false;
+
+        if (kingInCheck) {
+            chessTile[kingRow][kingCol].setBorder(BorderFactory.createLineBorder(Color.RED, 5));
+        } else {
+            chessTile[kingRow][kingCol].setBorder(null);
+        }
+
+        return kingInCheck;
     }
 
-    //Checkmate
+    // Checkmate
     private boolean isCheckmate(boolean isWhitePlayer) {
         // Check if the player is in check
         if (!isInCheck(isWhitePlayer))
             return false;
-    
+
         // Try all possible moves for the player
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
@@ -200,7 +258,7 @@ public class Game {
                                 Piece temp = board[newRow][newCol];
                                 board[newRow][newCol] = board[i][j];
                                 board[i][j] = null;
-    
+
                                 // Check if the king is still in check after the move
                                 if (!isInCheck(isWhitePlayer)) {
                                     // Undo the move
@@ -208,8 +266,10 @@ public class Game {
                                     board[newRow][newCol] = temp;
                                     return false;
                                 }
-    
+
                                 // Undo the move
+                                if (newRow != i && newCol != j)
+                                    chessTile[newRow][newCol].setBorder(null);
                                 board[i][j] = board[newRow][newCol];
                                 board[newRow][newCol] = temp;
                             }
@@ -218,7 +278,7 @@ public class Game {
                 }
             }
         }
-    
+
         return true;
     }
 
@@ -227,7 +287,7 @@ public class Game {
         // Check if the player has no legal moves and their king is not in check
         if (isInCheck(isWhitePlayer))
             return false;
-    
+
         // Try all possible moves for the player
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
@@ -242,10 +302,9 @@ public class Game {
                 }
             }
         }
-    
+
         return true;
     }
-    
 
     public Game() {
         try {

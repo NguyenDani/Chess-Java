@@ -41,12 +41,17 @@ public class ChessGUI extends JFrame {
         add(chessBoard, BorderLayout.CENTER);
     }
     
-    public void endGame(String result) {
+    public void endGame(Boolean result) {
         JPanel endJPanel = new JPanel();
         JLabel endText = new JLabel();
-        endText.setText(result);
-        endText.setFont(new Font("Arial", Font.BOLD, 20));
-        endText.setForeground(Color.BLUE);
+        if (result == null) {
+            endText.setText("Stalemate Game Over");
+        } else {
+            String endGameText = (result) ? "White" : "Black";
+            endText.setText(endGameText + " Wins!");
+        }
+        endText.setFont(new Font("Arial", Font.BOLD, 25));
+        endText.setForeground(Color.BLACK);
         endJPanel.add(endText);
         add(endJPanel, BorderLayout.NORTH);
     }

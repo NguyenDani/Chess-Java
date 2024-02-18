@@ -14,6 +14,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 public class Game {
+    private static Game instance;
+
     private ChessGUI chessGUI;
     private Piece[][] board;
     private JButton[][] chessTile;
@@ -131,7 +133,37 @@ public class Game {
 
     // Move Piece
     private void move(int oldCol, int oldRow, int newCol, int newRow) {
-        if (board[oldRow][oldCol].isValidMove(oldCol, oldRow, newCol, newRow, board)) {
+        // Check if castling is requested
+        if (board[oldRow][oldCol] instanceof King
+                && ((King) board[oldRow][oldCol]).isValidCastling(oldCol, oldRow, newCol, newRow, board)) {
+            if (ownCheck(oldCol, oldRow, newCol, newRow))
+                return;
+
+            // Perform castling
+            System.out.println("Execute Castling");
+            int direction = (newCol > oldCol) ? -1 : 1;
+            int rookCol = (newCol > oldCol) ? 7 : 0;
+
+            // Move the king
+            board[newRow][newCol] = board[oldRow][oldCol];
+            board[oldRow][oldCol] = null;
+            ((King) board[newRow][newCol]).isFirstMove = false;
+            chessTile[newRow][newCol].setIcon(chessTile[oldRow][oldCol].getIcon());
+            chessTile[oldRow][oldCol].setIcon(null);
+
+            // Move the rook
+            board[oldRow][newCol + direction] = board[oldRow][rookCol];
+            board[oldRow][rookCol] = null;
+            ((Rook) board[oldRow][newCol + direction]).isFirstMove = false;
+            chessTile[oldRow][newCol + direction].setIcon(chessTile[oldRow][rookCol].getIcon());
+            chessTile[oldRow][rookCol].setIcon(null);
+
+            // Switch player turn
+            whiteTurn = !whiteTurn;
+            return;
+        }
+
+        else if (board[oldRow][oldCol].isValidMove(oldCol, oldRow, newCol, newRow, board)) {
             if (isAnyCheck) {
                 // Only moves to get King out of check
                 if (!uncheckAfterMove(oldCol, oldRow, newCol, newRow))
@@ -141,7 +173,7 @@ public class Game {
             }
 
             // Prevent own check
-            if(ownCheck(oldCol, oldRow, newCol, newRow))
+            if (ownCheck(oldCol, oldRow, newCol, newRow))
                 return;
 
             // Move Piece and icon
@@ -170,31 +202,11 @@ public class Game {
                     chessGUI.endGame(null);
                 }
             }
-
-
-
-
-            /* 
-            isAnyCheck = (whiteTurn) ? isInCheck(true) : isInCheck(false);
-
-            if (isAnyCheck) {
-                if (isCheckmate(whiteTurn))
-                    if (whiteTurn)
-                        chessGUI.endGame(false);
-                    else
-                        chessGUI.endGame(true);
-            } else {
-                if (isStalemate(true) || isStalemate(false)) {
-                    chessGUI.endGame(null);
-                }
-            }
-            */
-
         }
     }
 
     private int[] getKing(boolean isWhitePlayer) {
-        int[] location = {-1, -1};
+        int[] location = { -1, -1 };
         // Find the position of the king
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
@@ -247,7 +259,7 @@ public class Game {
     }
 
     // Check
-    private boolean isInCheck(boolean isWhitePlayer) {
+    public boolean isInCheck(boolean isWhitePlayer) {
         // Find the position of the king
         kingLoc = getKing(isWhitePlayer);
 
@@ -326,7 +338,7 @@ public class Game {
         return true;
     }
 
-    public Game() {
+    private Game() {
         try {
             UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
         } catch (Exception e) {
@@ -340,8 +352,15 @@ public class Game {
         });
     }
 
+    public static Game getInstance() {
+        if (instance == null) {
+            instance = new Game();
+        }
+        return instance;
+    }
+
     // Main
     public static void main(String[] args) {
-        new Game();
+        Game.getInstance();
     }
 }

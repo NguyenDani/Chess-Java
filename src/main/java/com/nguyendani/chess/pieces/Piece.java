@@ -5,7 +5,6 @@ public abstract class Piece {
 
     public Piece(boolean isWhite) {
         this.isWhite = isWhite;
-
     }
 
     public abstract boolean isValidMove(int startX, int startY, int endX, int endY, Piece[][] board);

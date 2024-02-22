@@ -19,6 +19,7 @@ public class Rook extends Piece {
                         return true;
                     }
                 } else {
+                    updateFirstMove();
                     return true;
                 }
             }

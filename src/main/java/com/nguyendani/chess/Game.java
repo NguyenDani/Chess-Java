@@ -4,12 +4,16 @@ import com.nguyendani.chess.gui.ChessGUI;
 import com.nguyendani.chess.pieces.*;
 
 import java.awt.Color;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
@@ -127,7 +131,7 @@ public class Game {
             return new ImageIcon(imageUrl);
         } else {
             // Handle the case where the image is not found
-            return new ImageIcon(); // Default empty icon
+            return new ImageIcon();
         }
     }
 
@@ -183,6 +187,10 @@ public class Game {
             chessTile[newRow][newCol].setIcon(oldIcon);
             chessTile[oldRow][oldCol].setIcon(null);
 
+            // Check if pawn is available for promotion
+            if (board[newRow][newCol] instanceof Pawn && (newRow == 0 || newRow == 7))
+                promotePawn(newRow, newCol, whiteTurn);
+
             // switch player turn
             whiteTurn = !whiteTurn;
 
@@ -205,6 +213,53 @@ public class Game {
         }
     }
 
+    // Promote pawn
+    private void promotePawn(int x, int y, boolean color) {
+        // Create promotion GUI
+        SwingUtilities.invokeLater(() -> {
+            // JFrame promotionFrame = new JFrame("Pawn Promotion");
+            JPanel promotionPanel = new JPanel(new GridLayout(1, 4));
+
+            String[] options = { "Rook", "Knight", "Bishop", "Queen" };
+            for (String option : options) {
+                JButton button = new JButton(option);
+                button.addActionListener(e -> {
+                    switch (option) {
+                        case "Rook":
+                            board[x][y] = new Rook(color);
+                            break;
+                        case "Knight":
+                            board[x][y] = new Knight(color);
+                            break;
+                        case "Bishop":
+                            board[x][y] = new Bishop(color);
+                            break;
+                        case "Queen":
+                            board[x][y] = new Queen(color);
+                            break;
+                    }
+                    String colorString = (color) ? "white" : "black";
+                    ImageIcon pieceIcon = loadImageIcon(colorString + option + ".png");
+                    chessTile[x][y].setIcon(pieceIcon);
+
+                    // Close promotion GUI
+                    SwingUtilities.getWindowAncestor(promotionPanel).dispose();
+                });
+                promotionPanel.add(button);
+            }
+
+            // Create modal dialog
+            JDialog promotionDialog = new JDialog((JFrame) null, "Pawn Promotion", true);
+            promotionDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+            promotionDialog.getContentPane().add(promotionPanel);
+            promotionDialog.pack();
+            promotionDialog.setLocationRelativeTo(null); // Center the dialog on the screen
+            promotionDialog.setVisible(true);
+        });
+
+    }
+
+    // Get location of King
     private int[] getKing(boolean isWhitePlayer) {
         int[] location = { -1, -1 };
         // Find the position of the king

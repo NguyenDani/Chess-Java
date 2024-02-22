@@ -9,7 +9,7 @@ public class ChessGUI extends JFrame {
 
     public ChessGUI() {
         setTitle("Chess Game");
-        setSize(600, 600);
+        setSize(800, 800);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         setLayout(new BorderLayout());

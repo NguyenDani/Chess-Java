@@ -17,7 +17,6 @@ public class Pawn extends Piece {
         // First move: 2 space forward
         if (startY + 2 * direction == endY && startX == endX && isFirstMove) {
             if (isPathClear(startX, startY, endX, endY, board)) {
-                updateFirstMove();
                 return true;
             }
             return false;
@@ -26,7 +25,6 @@ public class Pawn extends Piece {
         // Regular move: 1 space forward
         else if (startY + direction == endY && startX == endX) {
             if (board[endY][endX] == null) {
-                updateFirstMove();
                 return true;
             }
             return false;
@@ -35,7 +33,6 @@ public class Pawn extends Piece {
         // Capture: 1 square diagonal forward
         else if (startY + direction == endY && Math.abs(startX - endX) == 1) {
             if (capture(endX, endY, board)) {
-                updateFirstMove();
                 return true;
             }
             return false;
@@ -44,7 +41,7 @@ public class Pawn extends Piece {
         return false;
     }
 
-    private void updateFirstMove() {
+    public void updateFirstMove() {
         if (isFirstMove) {
             isFirstMove = false;
         }

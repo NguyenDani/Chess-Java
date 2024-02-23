@@ -3,7 +3,7 @@ package com.nguyendani.chess.pieces;
 import com.nguyendani.chess.Game;
 
 public class King extends Piece {
-    public boolean isFirstMove;
+    private boolean isFirstMove;
 
     public King(boolean isWhite) {
         super(isWhite);
@@ -58,7 +58,7 @@ public class King extends Piece {
         return true;
     }
 
-    private void updateFirstMove() {
+    public void updateFirstMove() {
         if (isFirstMove) {
             isFirstMove = false;
         }

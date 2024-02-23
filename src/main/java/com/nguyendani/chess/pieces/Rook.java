@@ -15,11 +15,9 @@ public class Rook extends Piece {
             if (isPathClear(startX, startY, endX, endY, board)) {
                 if (board[endY][endX] != null) {
                     if (capture(endX, endY, board)) {
-                        updateFirstMove();
                         return true;
                     }
                 } else {
-                    updateFirstMove();
                     return true;
                 }
             }
@@ -28,9 +26,8 @@ public class Rook extends Piece {
         return false;
     }
 
-    private void updateFirstMove() {
+    public void updateFirstMove() {
         if (isFirstMove) {
-            System.out.println("Switch False Rook");
             isFirstMove = false;
         }
     }

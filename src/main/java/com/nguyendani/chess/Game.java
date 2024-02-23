@@ -144,21 +144,20 @@ public class Game {
                 return;
 
             // Perform castling
-            System.out.println("Execute Castling");
             int direction = (newCol > oldCol) ? -1 : 1;
             int rookCol = (newCol > oldCol) ? 7 : 0;
 
             // Move the king
             board[newRow][newCol] = board[oldRow][oldCol];
             board[oldRow][oldCol] = null;
-            ((King) board[newRow][newCol]).isFirstMove = false;
+            ((King) board[newRow][newCol]).updateFirstMove();
             chessTile[newRow][newCol].setIcon(chessTile[oldRow][oldCol].getIcon());
             chessTile[oldRow][oldCol].setIcon(null);
 
             // Move the rook
             board[oldRow][newCol + direction] = board[oldRow][rookCol];
             board[oldRow][rookCol] = null;
-            ((Rook) board[oldRow][newCol + direction]).isFirstMove = false;
+            ((Rook) board[oldRow][newCol + direction]).updateFirstMove();
             chessTile[oldRow][newCol + direction].setIcon(chessTile[oldRow][rookCol].getIcon());
             chessTile[oldRow][rookCol].setIcon(null);
 
@@ -187,6 +186,16 @@ public class Game {
             chessTile[newRow][newCol].setIcon(oldIcon);
             chessTile[oldRow][oldCol].setIcon(null);
 
+            if (board[newRow][newCol] instanceof King) {
+                ((King) board[newRow][newCol]).updateFirstMove();
+            }
+            if (board[newRow][newCol] instanceof Pawn) {
+                ((Pawn) board[newRow][newCol]).updateFirstMove();
+            }
+            if (board[newRow][newCol] instanceof Rook) {
+                ((Rook) board[newRow][newCol]).updateFirstMove();
+            }
+
             // Check if pawn is available for promotion
             if (board[newRow][newCol] instanceof Pawn && (newRow == 0 || newRow == 7))
                 promotePawn(newRow, newCol, whiteTurn);
@@ -194,6 +203,7 @@ public class Game {
             // switch player turn
             whiteTurn = !whiteTurn;
 
+            System.out.println("After switch");
             // Check for Game state (Check / Checkmate / Stalemate)
             isAnyCheck = (whiteTurn) ? isInCheck(true) : isInCheck(false);
 
@@ -206,7 +216,7 @@ public class Game {
                     else
                         chessGUI.endGame(true);
             } else {
-                if (isStalemate(true) || isStalemate(false)) {
+                if ((whiteTurn) ? isStalemate(true) : isStalemate(false)) {
                     chessGUI.endGame(null);
                 }
             }
@@ -375,12 +385,14 @@ public class Game {
 
     // Stalemate
     private boolean isStalemate(boolean isWhitePlayer) {
+        System.out.println("Stalemate");
         // Try all possible moves for the player
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 if (board[i][j] != null && board[i][j].isWhite == isWhitePlayer) {
                     for (int newRow = 0; newRow < 8; newRow++) {
                         for (int newCol = 0; newCol < 8; newCol++) {
+                            System.out.println(board[i][j]);
                             if (board[i][j].isValidMove(j, i, newCol, newRow, board)) {
                                 return false;
                             }

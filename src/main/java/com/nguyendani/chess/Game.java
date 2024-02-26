@@ -203,7 +203,6 @@ public class Game {
             // switch player turn
             whiteTurn = !whiteTurn;
 
-            System.out.println("After switch");
             // Check for Game state (Check / Checkmate / Stalemate)
             isAnyCheck = (whiteTurn) ? isInCheck(true) : isInCheck(false);
 
@@ -385,14 +384,12 @@ public class Game {
 
     // Stalemate
     private boolean isStalemate(boolean isWhitePlayer) {
-        System.out.println("Stalemate");
         // Try all possible moves for the player
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 if (board[i][j] != null && board[i][j].isWhite == isWhitePlayer) {
                     for (int newRow = 0; newRow < 8; newRow++) {
                         for (int newCol = 0; newCol < 8; newCol++) {
-                            System.out.println(board[i][j]);
                             if (board[i][j].isValidMove(j, i, newCol, newRow, board)) {
                                 return false;
                             }
